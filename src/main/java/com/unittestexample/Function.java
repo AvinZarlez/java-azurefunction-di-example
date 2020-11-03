@@ -27,7 +27,8 @@ public class Function {
                 methods = {HttpMethod.GET, HttpMethod.POST},
                 authLevel = AuthorizationLevel.ANONYMOUS)
                 HttpRequestMessage<Optional<String>> request,
-            final ExecutionContext context) {
+            final ExecutionContext context,
+            Election voter) {
         context.getLogger().info("Java HTTP trigger processed a request.");
 
         // Parse query parameter
@@ -37,7 +38,8 @@ public class Function {
         if (name == null) {
             return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("Please pass a name on the query string or in the request body").build();
         } else {
-            return request.createResponseBuilder(HttpStatus.OK).body("Hello, " + name).build();
+            voter.setVoter(name);
+            return request.createResponseBuilder(HttpStatus.OK).body("Hello, " + voter.getVoter()).build();
         }
     }
 }

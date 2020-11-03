@@ -1,8 +1,8 @@
 package com.unittestexample;
 
 import com.microsoft.azure.functions.*;
-//import org.mockito.invocation.InvocationOnMock;
-//import org.mockito.stubbing.Answer;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -17,6 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * Unit test for Function class.
  */
 public class FunctionTest {
+
+    @Mock
+    Election voter;
+
+    @Rule public MockitoRule mockiteRule = MockitoJUnit.rule();
+
     /**
      * Unit test for HttpTriggerJava method.
      */
@@ -44,10 +50,15 @@ public class FunctionTest {
         final ExecutionContext context = mock(ExecutionContext.class);
         doReturn(Logger.getGlobal()).when(context).getLogger();
 
+        when(voter.getVoter()).thenReturn("Mahsa");
+        assertEquals(voter.getVoter(), "Mahsa");
         // Invoke
-        final HttpResponseMessage ret = new Function().run(req, context);
+        final HttpResponseMessage ret = new Function().run(req, context, voter);
 
         // Verify
+        verify(voter).setVoter("Azure");
         assertEquals(ret.getStatus(), HttpStatus.OK);
+        
+        
     }
 }
